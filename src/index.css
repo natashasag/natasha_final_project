@@ -1,0 +1,207 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Carbon Footprint App Design System */
+@layer base {
+  :root {
+    /* Core Brand Colors */
+    --primary: 142 80% 45%; /* Eco Green */
+    --primary-foreground: 0 0% 100%;
+    --primary-light: 142 65% 65%;
+    --primary-dark: 142 90% 35%;
+    
+    /* Nature Inspired Palette */
+    --secondary: 120 30% 25%; /* Forest Green */
+    --secondary-foreground: 0 0% 100%;
+    --accent: 60 100% 50%; /* Sunshine Yellow */
+    --accent-foreground: 0 0% 10%;
+    
+    /* Earth Tones */
+    --earth-brown: 30 35% 45%;
+    --earth-sand: 35 25% 80%;
+    --sky-blue: 200 80% 60%;
+    
+    /* Alert Colors */
+    --good-footprint: 142 80% 45%; /* Green */
+    --bad-footprint: 0 75% 55%; /* Red */
+    --warning: 45 100% 60%; /* Orange */
+    
+    /* Neutral Scale */
+    --background: 0 0% 100%;
+    --foreground: 220 15% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 15%;
+    --muted: 220 15% 96%;
+    --muted-foreground: 220 10% 45%;
+    --border: 220 15% 90%;
+    --input: 220 15% 95%;
+    --ring: 142 80% 45%;
+    
+    /* Gradients */
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
+    --gradient-earth: linear-gradient(45deg, hsl(var(--earth-brown)), hsl(var(--earth-sand)));
+    --gradient-sky: linear-gradient(180deg, hsl(var(--sky-blue)), hsl(var(--primary-light)));
+    --gradient-good: linear-gradient(135deg, hsl(var(--good-footprint)), hsl(var(--primary-light)));
+    --gradient-bad: linear-gradient(135deg, hsl(var(--bad-footprint)), hsl(var(--warning)));
+    
+    /* Spacing & Typography */
+    --radius: 0.75rem;
+    --font-family: 'Inter', sans-serif;
+    
+    /* Shadows */
+    --shadow-eco: 0 10px 30px -10px hsl(var(--primary) / 0.3);
+    --shadow-card: 0 4px 20px -2px hsl(220 15% 15% / 0.1);
+    --shadow-good: 0 8px 25px -5px hsl(var(--good-footprint) / 0.4);
+    --shadow-bad: 0 8px 25px -5px hsl(var(--bad-footprint) / 0.4);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  
+  .dark {
+    --background: 220 15% 8%;
+    --foreground: 0 0% 95%;
+    --card: 220 15% 10%;
+    --card-foreground: 0 0% 95%;
+    --muted: 220 15% 15%;
+    --muted-foreground: 220 10% 65%;
+    --border: 220 15% 20%;
+    --input: 220 15% 15%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-family);
+    line-height: 1.6;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Button Variants */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium 
+           hover:opacity-90 active:scale-95 transition-all duration-200
+           shadow-lg hover:shadow-xl;
+    background: var(--gradient-hero);
+  }
+  
+  .btn-eco {
+    @apply px-8 py-4 rounded-xl font-semibold text-lg
+           hover:scale-105 active:scale-95 transition-all duration-300;
+    background: var(--gradient-hero);
+    color: white;
+    box-shadow: var(--shadow-eco);
+  }
+  
+  .btn-outline {
+    @apply border-2 border-primary text-primary px-6 py-3 rounded-lg font-medium
+           hover:bg-primary hover:text-primary-foreground transition-all duration-200;
+  }
+  
+  /* Card Components */
+  .card-eco {
+    @apply bg-card rounded-xl p-6 border border-border
+           hover:shadow-lg transition-all duration-300;
+    box-shadow: var(--shadow-card);
+  }
+  
+  .card-result-good {
+    @apply bg-card rounded-2xl p-8 border-2;
+    border-color: hsl(var(--good-footprint));
+    background: linear-gradient(135deg, 
+      hsl(var(--good-footprint) / 0.05), 
+      hsl(var(--primary-light) / 0.1));
+    box-shadow: var(--shadow-good);
+  }
+  
+  .card-result-bad {
+    @apply bg-card rounded-2xl p-8 border-2;
+    border-color: hsl(var(--bad-footprint));
+    background: linear-gradient(135deg, 
+      hsl(var(--bad-footprint) / 0.05), 
+      hsl(var(--warning) / 0.1));
+    box-shadow: var(--shadow-bad);
+  }
+  
+  /* Input Styles */
+  .input-eco {
+    @apply w-full px-4 py-3 rounded-lg border border-border bg-input
+           focus:ring-2 focus:ring-primary focus:border-transparent
+           transition-all duration-200 outline-none;
+  }
+  
+  /* Hero Section */
+  .hero-gradient {
+    background: var(--gradient-hero);
+  }
+  
+  .hero-text {
+    @apply text-4xl md:text-6xl font-bold leading-tight;
+    background: linear-gradient(135deg, white, rgba(255,255,255,0.8));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Animations */
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-pulse-eco {
+    animation: pulse-eco 2s ease-in-out infinite;
+  }
+  
+  .hover-lift {
+    @apply transition-transform duration-300 hover:-translate-y-2;
+  }
+}
+
+@layer utilities {
+  .text-gradient-primary {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .text-gradient-earth {
+    background: var(--gradient-earth);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .bg-gradient-good {
+    background: var(--gradient-good);
+  }
+  
+  .bg-gradient-bad {
+    background: var(--gradient-bad);
+  }
+}
+
+/* Keyframes */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-eco {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
