@@ -8,8 +8,8 @@ import jwt
 from functools import wraps
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'MONGO_URI')
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'mongodb+srv://<db_username>:<db_password>@natashasag.extfv.mongodb.net/?retryWrites=true&w=majority&appName=natashasag')
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'natasha06')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///footprints.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
