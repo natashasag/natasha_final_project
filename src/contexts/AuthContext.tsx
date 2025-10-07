@@ -1,11 +1,11 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-const API_URL = "https://footprints-backend-1.onrender.com";
+import React, { createContext, useContext, useState, useEffect } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export interface User {
   id: string;
-  email: string;
   name: string;
+  email: string;
 }
 
 export interface AuthContextType {
@@ -20,98 +20,119 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Load user session on startup
   useEffect(() => {
-    // Check for stored user data on component mount
-    const storedUser = localStorage.getItem('footprint_user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        localStorage.removeItem('footprint_user');
-      }
-    }
+    const storedUser = localStorage.getItem("footprint_user");
+    if (storedUser) setUser(JSON.parse(storedUser));
     setIsLoading(false);
   }, []);
 
+  // =============================
+  // REGISTER
+  // =============================
+  const register = async (
+    name: string,
+    email: string,
+    password: string
+  ): Promise<boolean> => {
+    setIsLoading(true);
+    try {
+      const res = await fetch(`${API_URL}/api/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error(data.message);
+        return false;
+      }
+
+      const userData = data.user;
+      const token = data.token;
+
+      localStorage.setItem("footprint_user", JSON.stringify(userData));
+      localStorage.setItem("footprint_token", token);
+      setUser(userData);
+
+      return true;
+    } catch (err) {
+      console.error("Registration Error:", err);
+      return false;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // =============================
+  // LOGIN
+  // =============================
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Get stored users
-    const storedUsers = JSON.parse(localStorage.getItem('footprint_users') || '[]');
-    const foundUser = storedUsers.find((u: any) => u.email === email && u.password === password);
-    
-    if (foundUser) {
-      const user = { id: foundUser.id, email: foundUser.email, name: foundUser.name };
-      setUser(user);
-      localStorage.setItem('footprint_user', JSON.stringify(user));
-      setIsLoading(false);
+    try {
+      const res = await fetch(`${API_URL}/api/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error(data.message);
+        return false;
+      }
+
+      const userData = data.user;
+      const token = data.token;
+
+      localStorage.setItem("footprint_user", JSON.stringify(userData));
+      localStorage.setItem("footprint_token", token);
+      setUser(userData);
+
       return true;
-    }
-    
-    setIsLoading(false);
-    return false;
-  };
-
-  const register = async (name: string, email: string, password: string): Promise<boolean> => {
-    setIsLoading(true);
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Get stored users
-    const storedUsers = JSON.parse(localStorage.getItem('footprint_users') || '[]');
-    
-    // Check if user already exists
-    if (storedUsers.find((u: any) => u.email === email)) {
-      setIsLoading(false);
+    } catch (err) {
+      console.error("Login Error:", err);
       return false;
+    } finally {
+      setIsLoading(false);
     }
-    
-    // Create new user
-    const newUser = {
-      id: Date.now().toString(),
-      name,
-      email,
-      password
-    };
-    
-    storedUsers.push(newUser);
-    localStorage.setItem('footprint_users', JSON.stringify(storedUsers));
-    
-    // Log in the new user
-    const user = { id: newUser.id, email: newUser.email, name: newUser.name };
-    setUser(user);
-    localStorage.setItem('footprint_user', JSON.stringify(user));
-    
-    setIsLoading(false);
-    return true;
   };
 
+  // =============================
+  // LOGOUT
+  // =============================
   const logout = () => {
     setUser(null);
-    localStorage.removeItem('footprint_user');
+    localStorage.removeItem("footprint_user");
+    localStorage.removeItem("footprint_token");
   };
 
-  const value = {
+  const value: AuthContextType = {
     user,
     login,
     register,
     logout,
-    isLoading
+    isLoading,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {!isLoading && children}
+    </AuthContext.Provider>
+  );
 };
