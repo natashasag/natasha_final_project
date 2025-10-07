@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+const API_URL = "https://footprints-backend-1.onrender.com";
+
 
 export interface User {
   id: string;
